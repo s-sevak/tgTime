@@ -17,11 +17,13 @@ class App implements AppInterface
         $this->telegramHandler = new TelegramHandler($this->userManager, $this->telegramBot);
     }
 
-    public function run()
+    public function run(): void
     {
-        while (true) {
+        try {
             sleep(2);
             $this->telegramHandler->processUpdates();
+        } catch (Exception $e) {
+            error_log($e->getMessage());
         }
     }
 }
