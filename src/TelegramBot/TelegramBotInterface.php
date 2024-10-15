@@ -1,5 +1,7 @@
 <?php
 
+namespace App\TelegramBot;
+
 interface TelegramBotInterface
 {
     public function query($method, $params = []);

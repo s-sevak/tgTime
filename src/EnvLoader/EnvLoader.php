@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/EnvLoaderInterface.php';
+namespace App\EnvLoader;
 
 class EnvLoader implements EnvLoaderInterface
 {

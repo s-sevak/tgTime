@@ -1,6 +1,11 @@
 <?php
 
-require_once __DIR__ . '/TelegramHandlerInterface.php';
+namespace App\Handlers;
+
+use App\UserManager\UserManager;
+use App\TelegramBot\TelegramBot;
+use App\UserManager\UserDTO;
+
 
 class TelegramHandler implements TelegramHandlerInterface
 {

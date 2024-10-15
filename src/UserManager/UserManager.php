@@ -1,8 +1,7 @@
 <?php
 
-require_once __DIR__ . '/UserManagerInterface.php';
-require_once __DIR__ . '/../Database/Database.php';
-require_once __DIR__ . '/UserDTO.php';
+namespace App\UserManager;
+use PDO;
 
 class UserManager implements UserManagerInterface
 {

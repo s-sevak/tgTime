@@ -1,7 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../EnvLoader/EnvLoader.php';
-require_once __DIR__ . '/DatabaseInterface.php';
+namespace App\Database;
+
+use App\EnvLoader\EnvLoader;
+use PDO;
+use PDOException;
 
 class Database implements DatabaseInterface
 {

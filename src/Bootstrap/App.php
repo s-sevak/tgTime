@@ -1,6 +1,11 @@
 <?php
 
-require_once __DIR__ . '/AppInterface.php';
+namespace App\Bootstrap;
+
+use App\Database\Database;
+use App\TelegramBot\TelegramBot;
+use App\UserManager\UserManager;
+use App\Handlers\TelegramHandler;
 
 class App implements AppInterface
 {

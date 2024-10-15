@@ -1,7 +1,8 @@
 <?php
 
-require_once __DIR__ . '/TelegramBotInterface.php';
-require_once __DIR__ . "/../EnvLoader/EnvLoader.php";
+namespace App\TelegramBot;
+
+use App\EnvLoader\EnvLoader;
 
 class TelegramBot implements TelegramBotInterface
 {
