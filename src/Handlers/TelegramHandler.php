@@ -2,17 +2,17 @@
 
 namespace App\Handlers;
 
-use App\UserManager\UserManager;
+use App\UserRepository\UserRepository;
 use App\TelegramBot\TelegramBot;
-use App\UserManager\UserDTO;
+use App\UserRepository\UserDTO;
 
 
 class TelegramHandler implements TelegramHandlerInterface
 {
-    private UserManager $userManager;
+    private UserRepository $userManager;
     private TelegramBot $telegramBot;
 
-    public function __construct(UserManager $userManager, TelegramBot $telegramBot)
+    public function __construct(UserRepository $userManager, TelegramBot $telegramBot)
     {
         $this->userManager = $userManager;
         $this->telegramBot = $telegramBot;

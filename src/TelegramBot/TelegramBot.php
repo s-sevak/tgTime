@@ -2,26 +2,17 @@
 
 namespace App\TelegramBot;
 
-use App\EnvLoader\EnvLoader;
-
 class TelegramBot implements TelegramBotInterface
 {
-    protected ?string $baseUrlWithToken;
+    protected string $baseUrlWithToken;
+    protected ?int $updateId = null;
 
-    protected ?string $updateId = null;
-
-    public function __construct()
+    public function __construct(string $token)
     {
-        $envLoader = (new EnvLoader())->loadEnv();
-        $telegramBotData = EnvLoader::getTelegramBotData();
-
-        $this->baseUrlWithToken =
-            $telegramBotData['TELEGRAM_BOT_BASE_URL'] .
-            $telegramBotData['TELEGRAM_BOT_TOKEN'] .
-            '/';
+        $this->baseUrlWithToken = "https://api.telegram.org/bot{$token}/";
     }
 
-    public function query($method, $params = [])
+    public function query(string $method, array $params = []): ?object
     {
         $url = $this->baseUrlWithToken . $method;
 
@@ -32,7 +23,7 @@ class TelegramBot implements TelegramBotInterface
         return json_decode(file_get_contents($url));
     }
 
-    public function getUpdates()
+    public function getUpdates(): ?array
     {
         $response = $this->query('getUpdates', [
             'offset' => $this->updateId + 1
@@ -42,10 +33,10 @@ class TelegramBot implements TelegramBotInterface
             $this->updateId = $response->result[count($response->result) - 1]->update_id;
         }
 
-        return $response->result;
+        return $response->result ?? null;
     }
 
-    public function sendMessage(string $chatId, string $text)
+    public function sendMessage(string $chatId, string $text): ?object
     {
         return $this->query('sendMessage', [
             'chat_id' => $chatId,

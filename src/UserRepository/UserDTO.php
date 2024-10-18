@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserManager;
+namespace App\UserRepository;
 
 class UserDTO
 {

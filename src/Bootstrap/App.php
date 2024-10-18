@@ -3,22 +3,25 @@
 namespace App\Bootstrap;
 
 use App\Database\Database;
+use App\Factory\DatabaseFactory;
+use App\Factory\TelegramBotFactory;
 use App\TelegramBot\TelegramBot;
-use App\UserManager\UserManager;
+use App\UserRepository\UserRepository;
 use App\Handlers\TelegramHandler;
+use Exception;
 
 class App implements AppInterface
 {
     private Database $db;
-    private UserManager $userManager;
+    private UserRepository $userManager;
     private TelegramBot $telegramBot;
     private TelegramHandler $telegramHandler;
 
     public function __construct()
     {
-        $this->db = new Database();
-        $this->userManager = new UserManager($this->db->getConnection());
-        $this->telegramBot = new TelegramBot();
+        $this->db = DatabaseFactory::create();
+        $this->userManager = new UserRepository($this->db->getConnection());
+        $this->telegramBot = TelegramBotFactory::create();
         $this->telegramHandler = new TelegramHandler($this->userManager, $this->telegramBot);
     }
 

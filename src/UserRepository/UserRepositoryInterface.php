@@ -1,8 +1,8 @@
 <?php
 
-namespace App\UserManager;
+namespace App\UserRepository;
 
-interface UserManagerInterface
+interface UserRepositoryInterface
 {
     public function saveUsers(array $users): void;
 
