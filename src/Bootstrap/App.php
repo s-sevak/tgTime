@@ -9,6 +9,7 @@ use App\TelegramBot\TelegramBot;
 use App\UserRepository\UserRepository;
 use App\Handlers\TelegramHandler;
 use Exception;
+use Psr\Container\ContainerInterface;
 
 class App implements AppInterface
 {
@@ -17,12 +18,13 @@ class App implements AppInterface
     private TelegramBot $telegramBot;
     private TelegramHandler $telegramHandler;
 
-    public function __construct()
+    public function __construct(ContainerInterface $container)
     {
-        $this->db = DatabaseFactory::create();
+        $this->db = DatabaseFactory::create($container);
+        $this->telegramBot = TelegramBotFactory::create($container);
         $this->userManager = new UserRepository($this->db->getConnection());
-        $this->telegramBot = TelegramBotFactory::create();
         $this->telegramHandler = new TelegramHandler($this->userManager, $this->telegramBot);
+
     }
 
     public function run(): void

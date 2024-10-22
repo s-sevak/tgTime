@@ -12,6 +12,7 @@ class TelegramBot implements TelegramBotInterface
         $this->baseUrlWithToken = "https://api.telegram.org/bot{$token}/";
     }
 
+
     public function query(string $method, array $params = []): ?object
     {
         $url = $this->baseUrlWithToken . $method;
