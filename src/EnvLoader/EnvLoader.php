@@ -2,6 +2,8 @@
 
 namespace App\EnvLoader;
 
+use Exception;
+
 class EnvLoader implements EnvLoaderInterface
 {
     private static ?array $dbConnectData;
@@ -11,7 +13,6 @@ class EnvLoader implements EnvLoaderInterface
     public function __construct(string $filePath = null)
     {
         $this->filePath = $filePath ?? dirname(__DIR__) . '/../.env';
-        //        print_r($this->filePath);die;
     }
 
     public function loadEnv(): void

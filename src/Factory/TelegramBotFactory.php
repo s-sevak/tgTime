@@ -2,17 +2,15 @@
 
 namespace App\Factory;
 
-use App\EnvLoader\EnvLoader;
+use App\EnvLoader\EnvLoaderInterface;
 use App\TelegramBot\TelegramBot;
-use Psr\Container\ContainerInterface;
 
 class TelegramBotFactory
 {
-    public static function create(ContainerInterface $container): TelegramBot
+    public static function create(EnvLoaderInterface $envLoader): TelegramBot
     {
-        $envLoader = $container->get(EnvLoader::class);
         $envLoader->loadEnv();
-        $telegramBotData = EnvLoader::getTelegramBotData();
+        $telegramBotData = $envLoader::getTelegramBotData();
 
         return new TelegramBot($telegramBotData['TELEGRAM_BOT_TOKEN']);
     }

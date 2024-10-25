@@ -2,20 +2,15 @@
 
 namespace App\Factory;
 
-use App\EnvLoader\EnvLoader;
 use App\Database\Database;
-use Psr\Container\ContainerInterface;
+use App\EnvLoader\EnvLoaderInterface;
 
 class DatabaseFactory
 {
-    public static function create(ContainerInterface $container): Database
+    public static function create(EnvLoaderInterface $envLoader): Database
     {
-//        $envLoader = new EnvLoader();
-//        $envLoader->loadEnv();
-//        $dbSet = EnvLoader::getDbConnectData();
-        $envLoader = $container->get(EnvLoader::class);
         $envLoader->loadEnv();
-        $dbSet = EnvLoader::getDbConnectData();
+        $dbSet = $envLoader::getDbConnectData();
 
         return new Database(
             $dbSet['DB_HOST'],
