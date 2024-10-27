@@ -5,33 +5,35 @@ use App\Database\Database;
 use App\TelegramBot\TelegramBot;
 use App\UserRepository\UserRepository;
 use DI\ContainerBuilder;
-use Psr\Container\ContainerInterface;
-use App\Factory\DatabaseFactory;
-use App\Factory\TelegramBotFactory;
+//use App\Factory\DatabaseFactory;
+//use App\Factory\TelegramBotFactory;
 use App\EnvLoader\EnvLoader;
 
 $builder = new ContainerBuilder();
 
+$envLoader = new EnvLoader();
+$envLoader->loadEnv();
+$dbConfig = EnvLoader::getDbConnectData();
+$telegramConfig = EnvLoader::getTelegramBotData();
+
 $builder->addDefinitions([
-    'EnvLoader' => DI\create(EnvLoader::class),
+//    EnvLoader::class => DI\create(EnvLoader::class),
+    EnvLoader::class => $envLoader,
 
-    'Database' => DI\factory([DatabaseFactory::class, 'create'])
-        ->parameter('envLoader', DI\get('EnvLoader')),
+    Database::class => DI\autowire(Database::class)
+        ->constructor(
+            $dbConfig['DB_HOST'],
+            $dbConfig['DB_NAME'],
+            $dbConfig['DB_USERNAME'],
+            $dbConfig['DB_PASSWORD']
+        ),
 
-    'TelegramBot' => DI\factory([TelegramBotFactory::class, 'create'])
-        ->parameter('envLoader', DI\get('EnvLoader')),
+    TelegramBot::class => DI\autowire(TelegramBot::class)
+        ->constructor($telegramConfig['TELEGRAM_BOT_TOKEN']),
 
-    'UserRepository' => function (ContainerInterface $c) {
-        return new UserRepository($c->get('Database')->getConnection());
-    },
+    UserRepository::class => DI\autowire(UserRepository::class),
 
-    'App' => function (ContainerInterface $c) {
-        return new App(
-            $c->get('Database'),
-            $c->get('UserRepository'),
-            $c->get('TelegramBot')
-        );
-    },
+    App::class => DI\autowire(App::class),
 ]);
 
 return $builder->build();
