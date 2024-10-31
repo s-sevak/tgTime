@@ -7,9 +7,9 @@ class TelegramBot implements TelegramBotInterface
     protected string $baseUrlWithToken;
     protected ?int $updateId = null;
 
-    public function __construct(string $token)
+    public function __construct(string $token, string $telegramBotBaseUrl)
     {
-        $this->baseUrlWithToken = "https://api.telegram.org/bot{$token}/";
+        $this->baseUrlWithToken = $telegramBotBaseUrl . $token . '/';
     }
 
 

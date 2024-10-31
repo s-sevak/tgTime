@@ -5,35 +5,52 @@ use App\Database\Database;
 use App\TelegramBot\TelegramBot;
 use App\UserRepository\UserRepository;
 use DI\ContainerBuilder;
-//use App\Factory\DatabaseFactory;
-//use App\Factory\TelegramBotFactory;
 use App\EnvLoader\EnvLoader;
+use Psr\Container\ContainerInterface;
 
 $builder = new ContainerBuilder();
 
 $envLoader = new EnvLoader();
 $envLoader->loadEnv();
-$dbConfig = EnvLoader::getDbConnectData();
-$telegramConfig = EnvLoader::getTelegramBotData();
 
 $builder->addDefinitions([
-//    EnvLoader::class => DI\create(EnvLoader::class),
+
     EnvLoader::class => $envLoader,
 
-    Database::class => DI\autowire(Database::class)
-        ->constructor(
-            $dbConfig['DB_HOST'],
-            $dbConfig['DB_NAME'],
-            $dbConfig['DB_USERNAME'],
-            $dbConfig['DB_PASSWORD']
-        ),
+    PDO::class => function () {
+        $dsn = 'mysql:host=' . $_ENV['DB_HOST'] . ';dbname=' . $_ENV['DB_NAME'];
+        $username = $_ENV['DB_USERNAME'];
+        $password = $_ENV['DB_PASSWORD'];
+        return new PDO($dsn, $username, $password);
+    },
 
-    TelegramBot::class => DI\autowire(TelegramBot::class)
-        ->constructor($telegramConfig['TELEGRAM_BOT_TOKEN']),
+    Database::class => function () {
+        return new Database(
+            $_ENV['DB_HOST'],
+            $_ENV['DB_NAME'],
+            $_ENV['DB_USERNAME'],
+            $_ENV['DB_PASSWORD']
+        );
+    },
 
-    UserRepository::class => DI\autowire(UserRepository::class),
+    TelegramBot::class => function () {
+        return new TelegramBot(
+            $_ENV['TELEGRAM_BOT_TOKEN'],
+            $_ENV['TELEGRAM_BOT_BASE_URL']
+        );
+    },
 
-    App::class => DI\autowire(App::class),
+    UserRepository::class => function (ContainerInterface $c) {
+        return new UserRepository($c->get(PDO::class));
+    },
+
+    App::class => function (ContainerInterface $c) {
+        return new App(
+            $c->get(Database::class),
+            $c->get(UserRepository::class),
+            $c->get(TelegramBot::class)
+        );
+    }
 ]);
 
 return $builder->build();
