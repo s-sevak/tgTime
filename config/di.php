@@ -1,12 +1,9 @@
 <?php
 
-use App\Bootstrap\App;
 use App\Database\Database;
 use App\TelegramBot\TelegramBot;
-use App\UserRepository\UserRepository;
 use DI\ContainerBuilder;
 use App\EnvLoader\EnvLoader;
-use Psr\Container\ContainerInterface;
 
 $builder = new ContainerBuilder();
 
@@ -24,33 +21,19 @@ $builder->addDefinitions([
         return new PDO($dsn, $username, $password);
     },
 
-    Database::class => function () {
-        return new Database(
-            $_ENV['DB_HOST'],
-            $_ENV['DB_NAME'],
-            $_ENV['DB_USERNAME'],
-            $_ENV['DB_PASSWORD']
-        );
-    },
+    Database::class => DI\autowire(Database::class)
+        ->constructor(
+            DI\env('DB_HOST'),
+            DI\env('DB_NAME'),
+            DI\env('DB_USERNAME'),
+            DI\env('DB_PASSWORD')
+        ),
 
-    TelegramBot::class => function () {
-        return new TelegramBot(
-            $_ENV['TELEGRAM_BOT_TOKEN'],
-            $_ENV['TELEGRAM_BOT_BASE_URL']
-        );
-    },
-
-    UserRepository::class => function (ContainerInterface $c) {
-        return new UserRepository($c->get(PDO::class));
-    },
-
-    App::class => function (ContainerInterface $c) {
-        return new App(
-            $c->get(Database::class),
-            $c->get(UserRepository::class),
-            $c->get(TelegramBot::class)
-        );
-    }
+    TelegramBot::class => DI\autowire(TelegramBot::class)
+        ->constructor(
+            DI\env('TELEGRAM_BOT_TOKEN'),
+            DI\env('TELEGRAM_BOT_BASE_URL')
+        ),
 ]);
 
 return $builder->build();
